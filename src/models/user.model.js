@@ -20,7 +20,7 @@ const userSchema=new Schema(
             trim:true
 
         },
-        fullname:{
+        fullName:{
             type: String,
             required: true,
             trim: true, 
@@ -39,7 +39,7 @@ const userSchema=new Schema(
                 ref:"Video"
             }
         ],
-        passward:{
+        password:{
             type: String,
             required:[true, "Password is required"],
         },
@@ -57,19 +57,19 @@ const userSchema=new Schema(
         return next();
     }
     else{
-        this.passward=bycrypt.hash(this.passward,10)
+        this.password=await bycrypt.hash(this.password,10)
     }
  })
- userSchema.methods.ispasswardCorrect= async function(passward){
-    return await bycrypt.compare(passward,this.passward)
+ userSchema.methods.ispasswordCorrect= async function(password){
+    return await bycrypt.compare(password,this.password)
  }
 userSchema.methods.generateAccessToken=function(){
 return jwt.sign(
     {
         _id:this._id,
         email:this.email,
-        fullname:this.fullname,
-        usernam:this.username
+        fullName:this.fullName,
+        userName:this.userName
     },
     process.env.TOKEN_ACCESS_SECRET,
     {

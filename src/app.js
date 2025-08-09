@@ -17,9 +17,8 @@ import cors from "cors"
 
 
 
- import userRoute from "./routes/user.routes.js"
+ import userRouter from "./routes/user.routes.js"
 
-
- app.use("/api/v1/users",userRoute)
+ app.use("/api/v1/users",userRouter)
 
  export {app}
