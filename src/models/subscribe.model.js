@@ -19,7 +19,7 @@ const subscriberSchema=new Schema(
   )
     
 
-export const Subscriber=mongoose.model("Subscriber",subscriberSchema,)
+export const Subscriber=mongoose.model("Subscriber",subscriberSchema)
 
 
 

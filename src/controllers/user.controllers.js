@@ -11,6 +11,9 @@ import { Video } from "../models/video.model.js";
 const generateRefreshAndAccessToken=async (userId)=> {
   const user=await User.findById(userId)
     const accessToken=await user.generateAccessToken()
+
+    // console.log(accessToken);
+    
   const refreshToken=await user.generateRefreshToken()
 
   user.refreshToken=refreshToken
@@ -124,11 +127,14 @@ const userLogin=asyncHandler(async (req,res)=>{
   const ispasswordCorrect=await user.ispasswordCorrect(password)
 
   if (!ispasswordCorrect) {
-    throw new apiError(400,"invaild password")
+    throw new apiError(400,"invaild password try with a valid password")
   }
 
 
-const {accessToken,refreshToken}=generateRefreshAndAccessToken(user._id)
+const {accessToken,refreshToken}=await generateRefreshAndAccessToken(user._id)
+
+// console.log(accessToken);
+
 
   const loggedInUser=await User.findById(user._id)
   .select("-password -refreshToken")
@@ -138,10 +144,11 @@ const {accessToken,refreshToken}=generateRefreshAndAccessToken(user._id)
     secure:true
 
   }
-  return res.status(200)
-.cookie("accessToken",accessToken,options)
-.cookie("refreshToken",refreshToken,options)
-.json(
+  return res
+  .status(200)
+  .cookie("accessToken",accessToken,options)
+  .cookie("refreshToken",refreshToken,options)
+  .json(
   new apiResponse(
     200,
     {
