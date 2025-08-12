@@ -1,0 +1,54 @@
+#================== _______________________________________ ======================
+                    |                                      | 
+#================== | EXTRA INFO ABOUT paginatin AND regex | ======================
+
+#================== |_____________________________________ | ======================
+
+const getAllVideos = asyncHandler(async (req, res) => {
+    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
+
+    const pipeline = [];
+
+    // Filter by userId if provided
+    if (userId) {
+        pipeline.push({
+            $match: {
+                _id: mongoose.Types.ObjectId(userId) // Ensure userId is a valid ObjectId
+            }
+        });
+    }
+
+    // Apply query to title and description (case-insensitive partial match)
+    if (query) {
+        pipeline.push({
+            $match: {
+                $or: [
+                    { title: { $regex: query, $options: "i" } }, // Case-insensitive partial match
+                    { description: { $regex: query, $options: "i" } }
+                ]
+            }
+        });
+    }
+
+    // Add sorting stage if sortBy and sortType are provided
+    if (sortBy && sortType) {
+        const sortOrder = sortType === "asc" ? 1 : -1;
+        pipeline.push({ $sort: { [sortBy]: sortOrder } });
+    }
+
+    const options = {
+        page: parseInt(page), // Convert to integer
+        limit: parseInt(limit) // Convert to integer
+    };
+
+    const videos = await Video.aggregatePaginate(pipeline, options); // Use await
+
+    res.status(200).json(videos);
+});
+
+
+#=================================================================
+#================================================================
+const { page: rawPage = 1,limit: rawLimit = 10, query, sortBy, sortType, userId } = req.query
+   const page=parseInt(rawPage,10)
+   const limit=parseInt(rawLimit,10)

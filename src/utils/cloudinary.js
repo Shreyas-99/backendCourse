@@ -23,10 +23,23 @@ const uploadOnCloudinary= async (localFilePath)=>{
          return null
     }
 }
+const uploadVideoOnCloudinary= async (localFilePath)=>{
+
+    try {
+        if(!localFilePath) return null
+        const response=await cloudinary.uploader.upload(localFilePath,{resource_type:"video"})
+        // succefully uploaded
+         fs.unlinkSync(localFilePath)
+         return response
+    } catch (error) {
+         fs.unlinkSync(localFilePath)
+         return null
+    }
+}
 
 const deletefromCloudinary=async (urlFromDatabase)=>{
   if (urlFromDatabase===""||urlFromDatabase===null,urlFromDatabase===undefined) {
-    return null
+    throw apiError(400,"url is not in format")
   }
   const splittedArray1=urlFromDatabase.split("/")
   const splittedArray2=splittedArray1[7]
@@ -36,7 +49,7 @@ const deletefromCloudinary=async (urlFromDatabase)=>{
   return null;
  }
 
- const response=await cloudinary.uploader.destroy(public_id,{resource_type:'auto'},(error,result)=>{
+ const response=await cloudinary.uploader.destroy(public_id,{resource_type:"image"},(error,result)=>{
   if(error){
     throw new apiError(500,error?.message||'error while deleting the assets')
   }
@@ -44,4 +57,5 @@ const deletefromCloudinary=async (urlFromDatabase)=>{
  })
  return response
 }
-export {uploadOnCloudinary,deletefromCloudinary}
+export {uploadOnCloudinary,deletefromCloudinary,uploadVideoOnCloudinary}
+

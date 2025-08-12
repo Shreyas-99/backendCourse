@@ -165,6 +165,8 @@ const {accessToken,refreshToken}=await generateRefreshAndAccessToken(user._id)
 
 const userLogout=asyncHandler(async (req,res)=>{
    const user=req.user
+  //  console.log(req.user);
+   
 
 
   await User.findByIdAndUpdate(
@@ -286,8 +288,8 @@ const updateAccontDetails=asyncHandler(async(req,res)=>{
   const user=await User.findByIdAndUpdate(req.user?._id,
     {
     $set:{
-      fullName:fullName,
-      email:email
+      fullName,
+      email
     }
     
   },

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
-import { publishAVideo } from "../controllers/video.controller.js";
+import { getAllVideos, getVideoById, publishAVideo, updateThumbnail, updateVideo,deleteVideo, toggleIsPublished } from "../controllers/video.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 
@@ -19,7 +19,13 @@ router.route("/upload-video").post(
             maxCount:1
         }
     ]),
-        publishAVideo)
-
+        publishAVideo
+)
+router.route("/search").post(getAllVideos)
+router.route("/v/:videoId").post(getVideoById)
+router.route("/update-details/:videoId").patch(verifyJwt,updateVideo)
+router.route("/update-thumbnail/:videoId").patch(verifyJwt,upload.single("thumbnail"),updateThumbnail)
+router.route("/delete-video/:videoId").delete(verifyJwt,deleteVideo)
+router.route("/toggleVisibility/:videoId").patch(toggleIsPublished)
 
 export default router
