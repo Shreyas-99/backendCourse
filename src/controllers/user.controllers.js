@@ -7,6 +7,7 @@ import { apiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken"
 import { Subscriber } from "../models/subscribe.model.js";
 import { Video } from "../models/video.model.js";
+import mongoose, { mongo } from "mongoose";
 
 const generateRefreshAndAccessToken=async (userId)=> {
   const user=await User.findById(userId)
@@ -213,7 +214,7 @@ const refreshAcessToken=asyncHandler(async (req,res)=>{
       throw new apiError(400,"Invalid RefreshToken")
     }
 
-    if (!decodedRefreshToken===refreshTokenFromUserRequest) {
+    if (!(user.refreshToken===refreshTokenFromUserRequest)) {
       throw new apiError(400,"refresh Token is expired")
     }
 
@@ -457,9 +458,9 @@ const getUserChannelProfile=asyncHandler(async(req,res)=>{
 
 const getWatcHistory=asyncHandler(async(req,res)=>{
 
-const userWatchHistory=Video.aggregate([
+const userWatchHistory=User.aggregate([
   {
-    $match:{_id:req.user?._id}
+    $match:{_id:new mongoose.Types.ObjectId(String(req.user?._id))}
   },
   {
     $lookup:{

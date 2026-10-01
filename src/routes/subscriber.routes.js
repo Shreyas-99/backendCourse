@@ -10,7 +10,4 @@ router.route("/getSubscribedChannel/:userId").post(toggleSubscription)
 
 
 
-
-
-
 export default router
